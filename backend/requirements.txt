@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+SQLAlchemy>=2.0
+asyncpg
+psycopg2-binary
+fastapi-users[sqlalchemy]>=13.0.0
+passlib
