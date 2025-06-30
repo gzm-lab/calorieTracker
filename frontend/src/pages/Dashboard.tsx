@@ -129,8 +129,8 @@ export default function Dashboard() {
               height={400}
             >
               <VictoryAxis
-                tickValues={data.map((d, i) => d.x)}
-                tickFormat={(t, i) => xTickValues[i]}
+                tickValues={data.map((d, _i) => d.x)}
+                tickFormat={(_t, i) => xTickValues[i]}
                 style={{
                   tickLabels: { fontSize: 13, angle: 40, padding: 20, fill: '#64748b' },
                   grid: { stroke: 'none' },
