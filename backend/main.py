@@ -280,4 +280,9 @@ async def serve_react_app(full_path: str):
     index_path = os.path.join(FRONTEND_DIST, "index.html")
     if os.path.exists(index_path):
         return FileResponse(index_path)
-    return {"error": "index.html not found"} 
+    return {"error": "index.html not found"}
+
+# Endpoint OPTIONS pour gérer les requêtes preflight CORS
+@app.options("/{full_path:path}")
+async def options_handler(full_path: str):
+    return {"message": "OK"} 
