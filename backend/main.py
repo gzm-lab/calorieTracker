@@ -282,7 +282,7 @@ async def serve_react_app(full_path: str):
         return FileResponse(index_path)
     return {"error": "index.html not found"}
 
-# Endpoint OPTIONS pour gérer les requêtes preflight CORS
-@app.options("/{full_path:path}")
-async def options_handler(full_path: str):
+# Endpoint OPTIONS spécifique pour l'authentification
+@app.options("/auth/jwt/login")
+async def auth_options():
     return {"message": "OK"} 
