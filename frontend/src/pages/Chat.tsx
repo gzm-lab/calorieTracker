@@ -73,8 +73,8 @@ export default function Chat() {
     setErrorMeals(null);
     
     try {
-      console.log('📡 Appel API vers:', `http://localhost:8000/meals/?date_filter=${date}`);
-      const response = await fetch(`http://localhost:8000/meals/?date_filter=${date}`, {
+      console.log('📡 Appel API vers:', `/api/meals/?date_filter=${date}`);
+      const response = await fetch(`/api/meals/?date_filter=${date}`, {
         headers: {
           'Authorization': `Bearer ${jwt}`,
         },
@@ -154,7 +154,7 @@ export default function Chat() {
     setAddStatus('loading');
     setAddError(null);
     try {
-      const res = await fetch('http://localhost:8000/meals/', {
+      const res = await fetch('/api/meals/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

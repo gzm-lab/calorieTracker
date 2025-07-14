@@ -26,7 +26,7 @@ export default function Historique() {
   const fetchDailyStats = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:8000/meals/stats/daily?date_filter=${selectedDate}`, {
+      const response = await fetch(`/api/meals/stats/daily?date_filter=${selectedDate}`, {
         headers: {
           'Authorization': `Bearer ${jwt}`
         }

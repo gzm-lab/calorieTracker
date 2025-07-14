@@ -11,7 +11,7 @@ const macroOptions = [
   { value: 'fats', label: 'Lipides' },
 ];
 
-const API_URL = 'http://localhost:8000/meals/';
+const API_URL = '/api/meals/';
 
 function aggregateMealsByDay(meals: any[]) {
   // Regroupe les repas par date et somme les macros
