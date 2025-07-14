@@ -86,6 +86,10 @@ export default function Chat() {
       
       if (!response.ok) {
         const errorText = await response.text();
+        if (response.status === 401) {
+          setShowLogoutDialog(true);
+          return;
+        }
         console.log('❌ Erreur API:', errorText);
         throw new Error(`Erreur ${response.status}: ${errorText || 'Erreur lors de la récupération des repas'}`);
       }
@@ -107,8 +111,11 @@ export default function Chat() {
       setDailyTotals(totals);
       
     } catch (error: any) {
-      console.error('❌ Erreur complète:', error);
-      setErrorMeals(error.message || 'Erreur inconnue');
+      if (error.message && error.message.includes('401')) {
+        setShowLogoutDialog(true);
+      } else {
+        setErrorMeals(error.message || 'Erreur inconnue');
+      }
     } finally {
       setLoadingMeals(false);
     }

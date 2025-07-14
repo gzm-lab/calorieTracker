@@ -50,6 +50,7 @@ export default function Login() {
             onChange={e => setEmail(e.target.value)}
             className="px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
             required
+            autoComplete="username"
           />
           <input
             type="password"
@@ -58,6 +59,7 @@ export default function Login() {
             onChange={e => setPassword(e.target.value)}
             className="px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
             required
+            autoComplete="current-password"
           />
           <button
             type="submit"

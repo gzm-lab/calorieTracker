@@ -120,7 +120,7 @@ export default function Dashboard() {
           </AlertDialog.Content>
         </AlertDialog.Portal>
       </AlertDialog.Root>
-      <div style={{ width: '100vw', height: '100vh', background: 'transparent', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start' }}>
+      <div style={{ width: '100vw', minHeight: '100vh', background: 'transparent', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', overflowY: 'auto' }}>
         {/* Bouton retour en haut à gauche */}
         <div style={{ position: 'absolute', top: 24, left: 24, zIndex: 10 }}>
           <Button color="blue" variant="soft" size="3" style={{ borderRadius: 999 }} onClick={() => navigate('/chat')}>
@@ -147,8 +147,8 @@ export default function Dashboard() {
             </Button>
           ))}
         </Flex>
-        <Card style={{ width: '100%', maxWidth: 900, margin: '0 auto', borderRadius: 20, boxShadow: '0 2px 24px #0002', padding: 32, background: 'var(--color-panel-solid)', minHeight: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ width: '100%', height: 400 }}>
+        <Card style={{ width: '100%', maxWidth: '100vw', margin: '0 auto', borderRadius: 20, boxShadow: '0 2px 24px #0002', padding: 32, background: 'var(--color-panel-solid)', minHeight: 400, display: 'flex', alignItems: 'center', justifyContent: 'center', overflowX: 'auto' }}>
+          <div style={{ width: 900, maxWidth: '100%', height: 400 }}>
             {loading ? (
               <div style={{ textAlign: 'center', marginTop: 100, fontSize: 22, color: '#2563eb' }}>Chargement…</div>
             ) : error ? (
