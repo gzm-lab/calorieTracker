@@ -18,9 +18,9 @@ from fastapi.responses import FileResponse
 from fastapi_users.authentication.strategy.jwt import JWTStrategy as BaseJWTStrategy
 
 class DebugJWTStrategy(BaseJWTStrategy):
-    async def read_token(self, token: str):
+    async def read_token(self, token: str, user_manager):
         try:
-            return await super().read_token(token)
+            return await super().read_token(token, user_manager)
         except Exception as e:
             print(f"[JWT DEBUG] Erreur lors du décodage du token : {e}")
             raise

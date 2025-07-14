@@ -587,36 +587,36 @@ export default function Chat() {
         fontFamily: 'inherit',
       }}>
         <h2 style={{ fontWeight: 600, fontSize: 20, marginBottom: 16, color: '#2563eb' }}>Total de la journée</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
           <input readOnly value={dailyTotals.calories + ' kcal'} style={macroInputStyle} />
           <input readOnly value={dailyTotals.proteins + ' g protéines'} style={macroInputStyle} />
           <input readOnly value={dailyTotals.carbohydrates + ' g glucides'} style={macroInputStyle} />
           <input readOnly value={dailyTotals.fats + ' g lipides'} style={macroInputStyle} />
           <input readOnly value={dailyTotals.fiber + ' g fibres'} style={macroInputStyle} />
         </div>
+        <div style={{ textAlign: 'center' }}>
+          <button
+            onClick={() => navigate('/dashboard')}
+            style={{
+              borderRadius: 999,
+              fontFamily: 'inherit',
+              background: '#22c55e',
+              color: 'white',
+              fontWeight: 600,
+              fontSize: 18,
+              padding: '14px 40px',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 1px 6px #0001',
+              transition: 'background 0.2s',
+              margin: '0 auto',
+              display: 'block',
+            }}
+          >
+            Voir les dashboards
+          </button>
+        </div>
       </Card>
-      <div style={{ textAlign: 'center', marginTop: 32 }}>
-        <button
-          onClick={() => navigate('/dashboard')}
-          style={{
-            borderRadius: 999,
-            fontFamily: 'inherit',
-            background: '#22c55e',
-            color: 'white',
-            fontWeight: 600,
-            fontSize: 18,
-            padding: '14px 40px',
-            border: 'none',
-            cursor: 'pointer',
-            boxShadow: '0 1px 6px #0001',
-            transition: 'background 0.2s',
-            margin: '0 auto',
-            display: 'block',
-          }}
-        >
-          Voir les dashboards
-        </button>
-      </div>
     </div>
   );
 } 
