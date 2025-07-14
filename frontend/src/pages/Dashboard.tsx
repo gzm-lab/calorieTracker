@@ -57,6 +57,9 @@ export default function Dashboard() {
             'Authorization': `Bearer ${jwt}`,
           },
         });
+        if (res.status === 401) {
+          throw new Error('Session expirée ou non autorisée. Veuillez vous reconnecter.');
+        }
         if (!res.ok) throw new Error('Erreur lors de la récupération des repas');
         const data = await res.json();
         setMeals(data);

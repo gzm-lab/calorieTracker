@@ -172,6 +172,11 @@ export default function Chat() {
           date: new Date(selectedDate).toISOString(),
         })
       });
+      if (res.status === 401) {
+        setAddStatus('error');
+        setAddError('Session expirée ou non autorisée. Veuillez vous reconnecter.');
+        return;
+      }
       if (!res.ok) {
         const errorText = await res.text();
         setAddStatus('error');
@@ -591,9 +596,26 @@ export default function Chat() {
         </div>
       </Card>
       <div style={{ textAlign: 'center', marginTop: 32 }}>
-        <Button color="blue" size="4" variant="soft" style={{ borderRadius: 999, fontFamily: 'inherit' }} onClick={() => navigate('/dashboard')}>
+        <button
+          onClick={() => navigate('/dashboard')}
+          style={{
+            borderRadius: 999,
+            fontFamily: 'inherit',
+            background: '#22c55e',
+            color: 'white',
+            fontWeight: 600,
+            fontSize: 18,
+            padding: '14px 40px',
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 1px 6px #0001',
+            transition: 'background 0.2s',
+            margin: '0 auto',
+            display: 'block',
+          }}
+        >
           Voir les dashboards
-        </Button>
+        </button>
       </div>
     </div>
   );

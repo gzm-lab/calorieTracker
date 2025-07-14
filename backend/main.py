@@ -15,6 +15,15 @@ from typing import List, Optional
 from datetime import datetime, date, timedelta, timezone
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from fastapi_users.authentication.strategy.jwt import JWTStrategy as BaseJWTStrategy
+
+class DebugJWTStrategy(BaseJWTStrategy):
+    async def read_token(self, token: str):
+        try:
+            return await super().read_token(token)
+        except Exception as e:
+            print(f"[JWT DEBUG] Erreur lors du décodage du token : {e}")
+            raise
 
 app = FastAPI()
 
@@ -51,8 +60,8 @@ async def get_user_manager(user_db=Depends(get_user_db)):
 # Authentification JWT
 SECRET = os.environ.get("SECRET", "changeme")
 
-def get_jwt_strategy() -> JWTStrategy:
-    return JWTStrategy(secret=SECRET, lifetime_seconds=3600)
+def get_jwt_strategy() -> DebugJWTStrategy:
+    return DebugJWTStrategy(secret=SECRET, lifetime_seconds=3600)
 
 jwt_auth_backend = AuthenticationBackend(
     name="jwt",
