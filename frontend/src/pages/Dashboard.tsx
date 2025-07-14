@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button, Flex, Card } from '@radix-ui/themes';
 import { useNavigate } from 'react-router-dom';
-import { VictoryChart, VictoryBar, VictoryAxis, VictoryTheme, VictoryLine, VictoryLegend } from 'victory';
+import { VictoryChart, VictoryBar, VictoryAxis, VictoryTheme, VictoryLine } from 'victory';
 import { useAuth } from '../auth';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 
