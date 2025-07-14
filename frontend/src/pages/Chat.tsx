@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Heading, Card, Button, Flex } from '@radix-ui/themes';
+import { Card, Button } from '@radix-ui/themes';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth';
 
