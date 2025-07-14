@@ -15,7 +15,7 @@ export default function Login() {
     setLoading(true);
     setError('');
     try {
-      const response = await fetch('http://localhost:8000/auth/jwt/login', {
+      const response = await fetch('/api/auth/jwt/login', {
         method: 'POST',
         body: new URLSearchParams({
           username: email,
