@@ -219,11 +219,8 @@ export default function Chat() {
       paddingTop: 96,
       fontFamily: 'inherit',
     }}>
-      <Card style={{ padding: 32, borderRadius: 16, boxShadow: '0 2px 16px #0001', marginBottom: 32, fontFamily: 'inherit' }}>
-        <Heading as="h1" size="8" align="center" style={{ color: '#2563eb', fontFamily: 'inherit' }}>
-          CalorieTrack
-        </Heading>
-      </Card>
+      {/* Suppression du titre CalorieTrack */}
+      {/* Bloc Chat */}
       <Card style={{
         width: '100%',
         maxWidth: 800,
@@ -438,7 +435,7 @@ export default function Chat() {
           </Button>
         </form>
       </Card>
-      {/* Bloc Macros + Totaux */}
+      {/* Bloc Macros */}
       <Card style={{
         width: '100%',
         maxWidth: 800,
@@ -450,148 +447,154 @@ export default function Chat() {
         boxShadow: '0 2px 16px #0001',
         fontFamily: 'inherit',
       }}>
-        <Flex direction={{ initial: 'column', md: 'row' }} gap="6" align="stretch" justify="between" style={{ flexWrap: 'wrap' }}>
-          {/* Formulaire macros */}
-          <div style={{ flex: 1, minWidth: 0, maxWidth: '100%' }}>
-            {/* Sélecteur de date */}
-            <div style={{ marginBottom: 24 }}>
-              <h3 style={{ fontWeight: 600, fontSize: 16, marginBottom: 12, color: '#374151' }}>Sélectionner une date</h3>
-              <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-                    <input
-                      type="date"
-                      value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  style={{
-                    ...macroInputStyle,
-                    marginBottom: 0,
-                    flex: 1,
-                    minWidth: 200,
-                    maxWidth: 300
-                  }}
-                />
-                  <Button 
-                  color="blue" 
-                    variant="soft" 
-                    size="2"
-                  style={{ 
-                    borderRadius: 999, 
-                    fontFamily: 'inherit',
-                    whiteSpace: 'nowrap'
-                  }}
-                    onClick={() => setSelectedDate(new Date().toISOString().split('T')[0])}
-                >
-                  Aujourd'hui
-                </Button>
-              </div>
-                </div>
-            
-            <h2 style={{ fontWeight: 600, fontSize: 20, marginBottom: 16, color: '#2563eb' }}>Saisir mes macros</h2>
-            <form style={{ display: 'flex', flexDirection: 'column', gap: 0, width: '100%' }} onSubmit={e => { e.preventDefault(); handleAddMacros(); }}>
-              <div style={{ display: 'flex', gap: 16, marginBottom: 12 }}>
-                <select
-                  name="meal_type"
-                  value={macros.meal_type}
-                  onChange={handleMacroChange}
-                  style={{ ...macroInputStyle, minWidth: 120, maxWidth: 180 }}
-                  required
-                >
-                  <option value="breakfast">Petit déjeuner</option>
-                  <option value="lunch">Déjeuner</option>
-                  <option value="dinner">Dîner</option>
-                  <option value="autre">Autre</option>
-                </select>
-                <input
-                  name="name"
-                  type="text"
-                  placeholder="Nom du repas (optionnel)"
-                  value={macros.name}
-                  onChange={handleMacroChange}
-                  style={{ ...macroInputStyle, minWidth: 120, maxWidth: 220 }}
-                />
-              </div>
+        <div style={{ marginBottom: 24 }}>
+          <h3 style={{ fontWeight: 600, fontSize: 16, marginBottom: 12, color: '#374151' }}>Sélectionner une date</h3>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              style={{
+                ...macroInputStyle,
+                marginBottom: 0,
+                flex: 1,
+                minWidth: 200,
+                maxWidth: 300
+              }}
+            />
+            <Button 
+              color="blue" 
+              variant="soft" 
+              size="2"
+              style={{ 
+                borderRadius: 999, 
+                fontFamily: 'inherit',
+                whiteSpace: 'nowrap'
+              }}
+              onClick={() => setSelectedDate(new Date().toISOString().split('T')[0])}
+            >
+              Aujourd'hui
+            </Button>
+          </div>
+        </div>
+        <h2 style={{ fontWeight: 600, fontSize: 20, marginBottom: 16, color: '#2563eb' }}>Saisir mes macros</h2>
+        <form style={{ display: 'flex', flexDirection: 'column', gap: 0, width: '100%' }} onSubmit={e => { e.preventDefault(); handleAddMacros(); }}>
+          <div style={{ display: 'flex', gap: 16, marginBottom: 12 }}>
+            <select
+              name="meal_type"
+              value={macros.meal_type}
+              onChange={handleMacroChange}
+              style={{ ...macroInputStyle, minWidth: 120, maxWidth: 180 }}
+              required
+            >
+              <option value="breakfast">Petit déjeuner</option>
+              <option value="lunch">Déjeuner</option>
+              <option value="dinner">Dîner</option>
+              <option value="autre">Autre</option>
+            </select>
+            {/* Suppression du champ nom du repas */}
+          </div>
+          {/* Suppression du champ description */}
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', width: '100%' }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
               <input
-                name="description"
-                type="text"
-                placeholder="Description (optionnel)"
-                value={macros.description}
-                onChange={handleMacroChange}
-                style={{ ...macroInputStyle, marginBottom: 20 }}
-              />
-              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', width: '100%' }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                      <input
-                    name="calories"
-                        type="number"
+                name="calories"
+                type="number"
                 placeholder="Calories"
                 value={macros.calories}
                 onChange={handleMacroChange}
                 style={{ ...macroInputStyle, marginBottom: 20 }}
               />
-                      <input
-                    name="proteins"
-                        type="number"
-                    placeholder="Protéines (g)"
-                    value={macros.proteins}
-                    onChange={handleMacroChange}
-                    style={macroInputStyle}
-                  />
-                      <input
-                    name="carbohydrates"
-                        type="number"
-                    placeholder="Glucides (g)"
-                    value={macros.carbohydrates}
-                    onChange={handleMacroChange}
-                    style={macroInputStyle}
-                      />
-                    </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                      <input
-                    name="fats"
-                        type="number"
-                    placeholder="Lipides (g)"
-                    value={macros.fats}
-                    onChange={handleMacroChange}
-                    style={macroInputStyle}
-                  />
-                      <input
-                    name="fiber"
-                        type="number"
-                    placeholder="Fibres (g)"
-                    value={macros.fiber}
-                    onChange={handleMacroChange}
-                    style={macroInputStyle}
-                      />
-                    </div>
-                  </div>
-              <Button type="submit" color="green" variant="solid" size="3" style={{ marginTop: 16, borderRadius: 999, fontFamily: 'inherit' }} disabled={addStatus === 'loading'}>
-                {addStatus === 'loading' ? 'Ajout…' : 'Ajouter'}
-              </Button>
-              {addStatus === 'success' && (
-                <div style={{ color: '#059669', marginTop: 8, fontWeight: 500 }}>Repas ajouté !</div>
-              )}
-              {addStatus === 'error' && addError && (
-                <div style={{ color: '#dc2626', marginTop: 8, fontWeight: 500 }}>{addError}</div>
-              )}
-            </form>
+              <input
+                name="proteins"
+                type="number"
+                placeholder="Protéines (g)"
+                value={macros.proteins}
+                onChange={handleMacroChange}
+                style={macroInputStyle}
+              />
+              <input
+                name="carbohydrates"
+                type="number"
+                placeholder="Glucides (g)"
+                value={macros.carbohydrates}
+                onChange={handleMacroChange}
+                style={macroInputStyle}
+              />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <input
+                name="fats"
+                type="number"
+                placeholder="Lipides (g)"
+                value={macros.fats}
+                onChange={handleMacroChange}
+                style={macroInputStyle}
+              />
+              <input
+                name="fiber"
+                type="number"
+                placeholder="Fibres (g)"
+                value={macros.fiber}
+                onChange={handleMacroChange}
+                style={macroInputStyle}
+              />
+            </div>
           </div>
-          {/* Totaux du jour */}
-          <div style={{ flex: 1, minWidth: 0, maxWidth: '100%' }}>
-            <h2 style={{ fontWeight: 600, fontSize: 20, marginBottom: 16, color: '#2563eb' }}>Total de la journée</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <input readOnly value={dailyTotals.calories + ' kcal'} style={macroInputStyle} />
-              <input readOnly value={dailyTotals.proteins + ' g protéines'} style={macroInputStyle} />
-              <input readOnly value={dailyTotals.carbohydrates + ' g glucides'} style={macroInputStyle} />
-              <input readOnly value={dailyTotals.fats + ' g lipides'} style={macroInputStyle} />
-              <input readOnly value={dailyTotals.fiber + ' g fibres'} style={macroInputStyle} />
-                  </div>
-                </div>
-        </Flex>
-        <div style={{ textAlign: 'center', marginTop: 32 }}>
-          <Button color="blue" size="4" variant="soft" style={{ borderRadius: 999, fontFamily: 'inherit' }} onClick={() => navigate('/dashboard')}>
-            Voir les dashboards
-          </Button>
+          {/* Bouton Ajouter stylé */}
+          <button type="submit" disabled={addStatus === 'loading'}
+            style={{
+              marginTop: 16,
+              borderRadius: 999,
+              fontFamily: 'inherit',
+              background: '#22c55e',
+              color: 'white',
+              fontWeight: 600,
+              fontSize: 18,
+              padding: '14px 0',
+              border: 'none',
+              cursor: addStatus === 'loading' ? 'not-allowed' : 'pointer',
+              boxShadow: '0 1px 6px #0001',
+              transition: 'background 0.2s',
+              width: '100%',
+            }}
+          >
+            {addStatus === 'loading' ? 'Ajout…' : 'Ajouter'}
+          </button>
+          {addStatus === 'success' && (
+            <div style={{ color: '#059669', marginTop: 8, fontWeight: 500 }}>Repas ajouté !</div>
+          )}
+          {addStatus === 'error' && addError && (
+            <div style={{ color: '#dc2626', marginTop: 8, fontWeight: 500 }}>{addError}</div>
+          )}
+        </form>
+      </Card>
+      {/* Bloc Total journée séparé */}
+      <Card style={{
+        width: '100%',
+        maxWidth: 800,
+        marginLeft: 8,
+        marginRight: 8,
+        marginBottom: 32,
+        padding: 32,
+        borderRadius: 16,
+        boxShadow: '0 2px 16px #0001',
+        fontFamily: 'inherit',
+      }}>
+        <h2 style={{ fontWeight: 600, fontSize: 20, marginBottom: 16, color: '#2563eb' }}>Total de la journée</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <input readOnly value={dailyTotals.calories + ' kcal'} style={macroInputStyle} />
+          <input readOnly value={dailyTotals.proteins + ' g protéines'} style={macroInputStyle} />
+          <input readOnly value={dailyTotals.carbohydrates + ' g glucides'} style={macroInputStyle} />
+          <input readOnly value={dailyTotals.fats + ' g lipides'} style={macroInputStyle} />
+          <input readOnly value={dailyTotals.fiber + ' g fibres'} style={macroInputStyle} />
         </div>
       </Card>
+      <div style={{ textAlign: 'center', marginTop: 32 }}>
+        <Button color="blue" size="4" variant="soft" style={{ borderRadius: 999, fontFamily: 'inherit' }} onClick={() => navigate('/dashboard')}>
+          Voir les dashboards
+        </Button>
+      </div>
     </div>
   );
 } 
