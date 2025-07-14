@@ -144,8 +144,8 @@ export default function Dashboard() {
             ))}
           </Flex>
         </div>
-        {/* Bloc Graphe */}
-        <Card style={{ width: '100%', maxWidth: 500, margin: '0 auto', borderRadius: 20, boxShadow: '0 2px 24px #0002', padding: 16, background: 'var(--color-panel-solid)', minHeight: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}>
+        {/* Bloc Graphe + Légende */}
+        <Card style={{ width: '100%', maxWidth: 500, margin: '0 auto', borderRadius: 20, boxShadow: '0 2px 24px #0002', padding: 16, background: 'var(--color-panel-solid)', minHeight: 180, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 22 }}>
           <div style={{ width: '100%', height: 180 }}>
             {loading ? (
               <div style={{ textAlign: 'center', marginTop: 40, fontSize: 18, color: '#2563eb' }}>Chargement…</div>
@@ -206,22 +206,24 @@ export default function Dashboard() {
               </VictoryChart>
             )}
           </div>
+          {/* Légende compacte sous le graphe */}
+          <div style={{ width: '100%', marginTop: 8, display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap', fontSize: 12, color: '#2563eb' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <span style={{ display: 'inline-block', width: 18, height: 2, background: '#2563eb', borderRadius: 2, marginRight: 4, borderBottom: '1.5px dashed #2563eb' }}></span>
+              Moyenne all time
+            </span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <span style={{ display: 'inline-block', width: 18, height: 2, background: '#60a5fa', borderRadius: 2, marginRight: 4, borderBottom: '1.5px dashed #60a5fa' }}></span>
+              Moyenne 30j
+            </span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <span style={{ display: 'inline-block', width: 18, height: 2, background: '#93c5fd', borderRadius: 2, marginRight: 4, borderBottom: '1.5px dashed #93c5fd' }}></span>
+              Moyenne 7j
+            </span>
+          </div>
         </Card>
-        {/* Légende sous le graphe */}
-        <Card style={{ width: '100%', maxWidth: 500, margin: '0 auto', borderRadius: 16, boxShadow: '0 1px 8px #0001', padding: 8, background: 'white', marginBottom: 12 }}>
-          <VictoryLegend
-            orientation="horizontal"
-            gutter={10}
-            style={{ labels: { fontSize: 11, fill: '#64748b' } }}
-            data={[
-              { name: 'Moyenne all time', symbol: { fill: '#2563eb', type: 'minus', strokeDasharray: '6,6' } },
-              { name: 'Moyenne 30j', symbol: { fill: '#60a5fa', type: 'minus', strokeDasharray: '4,4' } },
-              { name: 'Moyenne 7j', symbol: { fill: '#93c5fd', type: 'minus', strokeDasharray: '2,6' } },
-            ]}
-          />
-        </Card>
-        {/* Moyennes sous le graphe */}
-        <Card style={{ width: '100%', maxWidth: 500, margin: '0 auto', borderRadius: 16, boxShadow: '0 1px 8px #0001', padding: 12, background: 'white', marginBottom: 24, textAlign: 'center', fontSize: 15, color: '#2563eb', fontWeight: 500 }}>
+        {/* Bloc Moyennes */}
+        <Card style={{ width: '100%', maxWidth: 500, margin: '0 auto', borderRadius: 16, boxShadow: '0 1px 8px #0001', padding: 16, background: 'white', marginBottom: 32, textAlign: 'center', fontSize: 16, color: '#2563eb', fontWeight: 500 }}>
           Moyenne all time : <span style={{ color: '#2563eb' }}>{allTimeAvg.toFixed(1)}</span> &nbsp;|&nbsp;
           Moyenne 30j : <span style={{ color: '#2563eb' }}>{avg30.toFixed(1)}</span> &nbsp;|&nbsp;
           Moyenne 7j : <span style={{ color: '#2563eb' }}>{avg7.toFixed(1)}</span>
