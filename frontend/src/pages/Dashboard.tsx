@@ -120,23 +120,23 @@ export default function Dashboard() {
           </AlertDialog.Content>
         </AlertDialog.Portal>
       </AlertDialog.Root>
-      <div style={{ width: '100%', minHeight: '100vh', background: 'transparent', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', overflowY: 'auto' }}>
-        {/* Bouton retour en haut à gauche */}
-        <div style={{ position: 'sticky', top: 0, left: 0, zIndex: 10, background: 'rgba(248,250,252,0.95)', width: '100%', padding: 12 }}>
+      <div style={{ width: '100%', minHeight: '100vh', background: '#f8fafc', padding: '0 8px', margin: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', overflowY: 'auto' }}>
+        {/* Bouton retour sticky */}
+        <div style={{ position: 'sticky', top: 0, left: 0, zIndex: 10, background: 'rgba(248,250,252,0.95)', width: '100%', padding: 12, marginBottom: 8 }}>
           <Button color="blue" variant="soft" size="3" style={{ borderRadius: 999 }} onClick={() => navigate('/chat')}>
             Retour
           </Button>
         </div>
         {/* Filtres macros scrollables */}
-        <div style={{ width: '100%', overflowX: 'auto', margin: '16px 0' }}>
-          <Flex gap="3" wrap="nowrap" justify="start" style={{ minWidth: 320, padding: '0 8px' }}>
+        <div style={{ width: '100%', overflowX: 'auto', margin: '0 auto 16px auto', paddingBottom: 4 }}>
+          <Flex gap="3" wrap="nowrap" justify="center" style={{ minWidth: 320 }}>
             {macroOptions.map(opt => (
               <Button
                 key={opt.value}
                 variant={macro === opt.value ? "solid" : "soft"}
                 color={macro === opt.value ? "blue" : "gray"}
                 size="3"
-                style={{ borderRadius: 999, minWidth: 120, fontWeight: macro === opt.value ? 600 : 400, transition: 'all 0.2s', margin: 2 }}
+                style={{ borderRadius: 999, minWidth: 110, fontWeight: macro === opt.value ? 600 : 400, boxShadow: '0 1px 4px #0001', margin: 2, padding: '8px 18px', fontSize: 15 }}
                 onClick={() => setMacro(opt.value)}
               >
                 {opt.label}
@@ -145,8 +145,8 @@ export default function Dashboard() {
           </Flex>
         </div>
         {/* Bloc Graphe */}
-        <Card style={{ width: '100%', maxWidth: 500, margin: '0 auto', borderRadius: 20, boxShadow: '0 2px 24px #0002', padding: 16, background: 'var(--color-panel-solid)', minHeight: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
-          <div style={{ width: '100%', height: 220 }}>
+        <Card style={{ width: '100%', maxWidth: 500, margin: '0 auto', borderRadius: 20, boxShadow: '0 2px 24px #0002', padding: 16, background: 'var(--color-panel-solid)', minHeight: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}>
+          <div style={{ width: '100%', height: 180 }}>
             {loading ? (
               <div style={{ textAlign: 'center', marginTop: 40, fontSize: 18, color: '#2563eb' }}>Chargement…</div>
             ) : error ? (
@@ -157,14 +157,15 @@ export default function Dashboard() {
               <VictoryChart
                 theme={VictoryTheme.material}
                 domainPadding={20}
-                width={400}
-                height={200}
+                width={window.innerWidth < 600 ? 320 : 400}
+                height={window.innerWidth < 600 ? 140 : 180}
+                padding={{ left: 40, right: 20, top: 20, bottom: 50 }}
               >
                 <VictoryAxis
                   tickValues={data.map((d, _i) => d.x)}
                   tickFormat={(_t, i) => xTickValues[i]}
                   style={{
-                    tickLabels: { fontSize: 10, angle: 40, padding: 12, fill: '#64748b' },
+                    tickLabels: { fontSize: 10, angle: 40, padding: 10, fill: '#64748b' },
                     grid: { stroke: 'none' },
                     axis: { stroke: '#64748b', strokeWidth: 1 }
                   }}
@@ -172,7 +173,7 @@ export default function Dashboard() {
                 <VictoryAxis
                   dependentAxis
                   style={{
-                    tickLabels: { fontSize: 11, fill: '#64748b' },
+                    tickLabels: { fontSize: 10, fill: '#64748b' },
                     grid: { stroke: 'none' },
                     axis: { stroke: '#64748b', strokeWidth: 1 }
                   }}
@@ -188,7 +189,7 @@ export default function Dashboard() {
                       opacity: 0.85,
                     },
                   }}
-                  barWidth={10}
+                  barWidth={window.innerWidth < 600 ? 8 : 10}
                 />
                 <VictoryLine
                   y={() => allTimeAvg}
@@ -207,11 +208,11 @@ export default function Dashboard() {
           </div>
         </Card>
         {/* Légende sous le graphe */}
-        <Card style={{ width: '100%', maxWidth: 500, margin: '0 auto', borderRadius: 16, boxShadow: '0 1px 8px #0001', padding: 12, background: 'white', marginBottom: 16 }}>
+        <Card style={{ width: '100%', maxWidth: 500, margin: '0 auto', borderRadius: 16, boxShadow: '0 1px 8px #0001', padding: 8, background: 'white', marginBottom: 12 }}>
           <VictoryLegend
             orientation="horizontal"
-            gutter={16}
-            style={{ labels: { fontSize: 12, fill: '#64748b' } }}
+            gutter={10}
+            style={{ labels: { fontSize: 11, fill: '#64748b' } }}
             data={[
               { name: 'Moyenne all time', symbol: { fill: '#2563eb', type: 'minus', strokeDasharray: '6,6' } },
               { name: 'Moyenne 30j', symbol: { fill: '#60a5fa', type: 'minus', strokeDasharray: '4,4' } },
@@ -220,7 +221,7 @@ export default function Dashboard() {
           />
         </Card>
         {/* Moyennes sous le graphe */}
-        <Card style={{ width: '100%', maxWidth: 500, margin: '0 auto', borderRadius: 16, boxShadow: '0 1px 8px #0001', padding: 16, background: 'white', marginBottom: 24, textAlign: 'center', fontSize: 16, color: '#2563eb', fontWeight: 500 }}>
+        <Card style={{ width: '100%', maxWidth: 500, margin: '0 auto', borderRadius: 16, boxShadow: '0 1px 8px #0001', padding: 12, background: 'white', marginBottom: 24, textAlign: 'center', fontSize: 15, color: '#2563eb', fontWeight: 500 }}>
           Moyenne all time : <span style={{ color: '#2563eb' }}>{allTimeAvg.toFixed(1)}</span> &nbsp;|&nbsp;
           Moyenne 30j : <span style={{ color: '#2563eb' }}>{avg30.toFixed(1)}</span> &nbsp;|&nbsp;
           Moyenne 7j : <span style={{ color: '#2563eb' }}>{avg7.toFixed(1)}</span>
