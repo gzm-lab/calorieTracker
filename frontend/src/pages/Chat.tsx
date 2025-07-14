@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Card, Button } from '@radix-ui/themes';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth';
+import * as AlertDialog from '@radix-ui/react-alert-dialog';
 
 export default function Chat() {
   const [messages, setMessages] = useState([
@@ -11,7 +12,8 @@ export default function Chat() {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const navigate = useNavigate();
-  const { jwt } = useAuth();
+  const { jwt, logout } = useAuth();
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
   // Macros state (formulaire)
   const [macros, setMacros] = useState({
@@ -173,8 +175,7 @@ export default function Chat() {
         })
       });
       if (res.status === 401) {
-        setAddStatus('error');
-        setAddError('Session expirée ou non autorisée. Veuillez vous reconnecter.');
+        setShowLogoutDialog(true);
         return;
       }
       if (!res.ok) {
@@ -213,145 +214,169 @@ export default function Chat() {
   };
 
   return (
-    <div style={{
-      width: '100vw',
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-      background: '#f8fafc',
-      paddingTop: 96,
-      fontFamily: 'inherit',
-    }}>
-      {/* Suppression du titre CalorieTrack */}
-      {/* Bloc Chat */}
-      <Card style={{
-        width: '100%',
-        maxWidth: 800,
-        minHeight: 400,
+    <>
+      <AlertDialog.Root open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <AlertDialog.Portal>
+          <AlertDialog.Overlay className="fixed inset-0 bg-black/40 z-50" />
+          <AlertDialog.Content className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-xl p-8 max-w-sm w-full flex flex-col items-center">
+            <AlertDialog.Title className="text-xl font-bold mb-2 text-red-600">Session expirée</AlertDialog.Title>
+            <AlertDialog.Description className="mb-6 text-gray-700 text-center">
+              Votre session a expiré ou vous n'êtes plus authentifié.<br />Veuillez vous reconnecter.
+            </AlertDialog.Description>
+            <AlertDialog.Action asChild>
+              <button
+                className="px-6 py-3 rounded-lg bg-blue-700 text-white font-semibold hover:bg-blue-800 transition text-base w-full"
+                onClick={() => {
+                  logout();
+                  setShowLogoutDialog(false);
+                  window.location.href = '/login';
+                }}
+              >
+                Se déconnecter
+              </button>
+            </AlertDialog.Action>
+          </AlertDialog.Content>
+        </AlertDialog.Portal>
+      </AlertDialog.Root>
+      <div style={{
+        width: '100vw',
+        minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        padding: 32,
-        borderRadius: 16,
-        boxShadow: '0 2px 16px #0001',
-        marginLeft: 8,
-        marginRight: 8,
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        background: '#f8fafc',
+        paddingTop: 96,
         fontFamily: 'inherit',
-        marginBottom: 32
       }}>
-        <div style={{
-          flex: 1,
-          overflowY: 'auto',
-          marginBottom: 16,
-          padding: '0 8px',
-          maxHeight: 320,
+        {/* Suppression du titre CalorieTrack */}
+        {/* Bloc Chat */}
+        <Card style={{
+          width: '100%',
+          maxWidth: 800,
+          minHeight: 400,
+          display: 'flex',
+          flexDirection: 'column',
+          padding: 32,
+          borderRadius: 16,
+          boxShadow: '0 2px 16px #0001',
+          marginLeft: 8,
+          marginRight: 8,
           fontFamily: 'inherit',
+          marginBottom: 32
         }}>
-          {messages.map((msg, i) => (
-            <div key={i} style={{
-              display: 'flex',
-              justifyContent: msg.type === 'user' ? 'flex-end' : 'flex-start',
-              marginBottom: 8,
-              fontFamily: 'inherit',
-            }}>
-              <div style={{
-                background: msg.type === 'user' ? '#2563eb' : '#f1f5f9',
-                color: msg.type === 'user' ? 'white' : '#1e293b',
-                borderRadius: 16,
-                padding: '8px 16px',
-                maxWidth: 520,
-                fontSize: 15,
-                boxShadow: '0 1px 4px #0001',
-                wordBreak: 'break-word',
+          <div style={{
+            flex: 1,
+            overflowY: 'auto',
+            marginBottom: 16,
+            padding: '0 8px',
+            maxHeight: 320,
+            fontFamily: 'inherit',
+          }}>
+            {messages.map((msg, i) => (
+              <div key={i} style={{
+                display: 'flex',
+                justifyContent: msg.type === 'user' ? 'flex-end' : 'flex-start',
+                marginBottom: 8,
                 fontFamily: 'inherit',
               }}>
-                {msg.text}
-              </div>
-            </div>
-          ))}
-          
-          {/* Affichage des repas de la date sélectionnée */}
-          {loadingMeals && (
-            <div style={{
-              display: 'flex',
-              justifyContent: 'flex-start',
-              marginBottom: 8,
-              fontFamily: 'inherit',
-            }}>
-              <div style={{
-                background: '#f1f5f9',
-                color: '#1e293b',
-                borderRadius: 16,
-                padding: '8px 16px',
-                maxWidth: 520,
-                fontSize: 15,
-                boxShadow: '0 1px 4px #0001',
-                fontFamily: 'inherit',
-              }}>
-                Chargement des repas...
-              </div>
-            </div>
-          )}
-          
-          {errorMeals && (
-            <div style={{
-              display: 'flex',
-              justifyContent: 'flex-start',
-              marginBottom: 8,
-              fontFamily: 'inherit',
-            }}>
-              <div style={{
-                background: '#fef2f2',
-                color: '#dc2626',
-                borderRadius: 16,
-                padding: '8px 16px',
-                maxWidth: 520,
-                fontSize: 15,
-                boxShadow: '0 1px 4px #0001',
-                fontFamily: 'inherit',
-              }}>
-                Erreur: {errorMeals}
-              </div>
-            </div>
-          )}
-          
-          {!loadingMeals && !errorMeals && meals.length > 0 && (
-            <div style={{
-              display: 'flex',
-              justifyContent: 'flex-start',
-              marginBottom: 8,
-              fontFamily: 'inherit',
-            }}>
-              <div style={{
-                background: '#f0f9ff',
-                color: '#1e293b',
-                borderRadius: 16,
-                padding: '16px',
-                maxWidth: 520,
-                fontSize: 15,
-                boxShadow: '0 1px 4px #0001',
-                fontFamily: 'inherit',
-              }}>
-                <div style={{ fontWeight: 600, marginBottom: 8, color: '#2563eb' }}>
-                  📅 Repas du {new Date(selectedDate).toLocaleDateString('fr-FR')}
+                <div style={{
+                  background: msg.type === 'user' ? '#2563eb' : '#f1f5f9',
+                  color: msg.type === 'user' ? 'white' : '#1e293b',
+                  borderRadius: 16,
+                  padding: '8px 16px',
+                  maxWidth: 520,
+                  fontSize: 15,
+                  boxShadow: '0 1px 4px #0001',
+                  wordBreak: 'break-word',
+                  fontFamily: 'inherit',
+                }}>
+                  {msg.text}
                 </div>
-                {meals.map((meal, index) => (
-                  <div key={index} style={{ 
-                    marginBottom: 8, 
-                    padding: '8px 12px', 
-                    background: 'white', 
-                    borderRadius: 8,
-                    border: '1px solid #e2e8f0'
-                  }}>
-                    <div style={{ fontWeight: 600, color: '#374151' }}>
-                      {meal.name} ({meal.meal_type})
+              </div>
+            ))}
+            
+            {/* Affichage des repas de la date sélectionnée */}
+            {loadingMeals && (
+              <div style={{
+                display: 'flex',
+                justifyContent: 'flex-start',
+                marginBottom: 8,
+                fontFamily: 'inherit',
+              }}>
+                <div style={{
+                  background: '#f1f5f9',
+                  color: '#1e293b',
+                  borderRadius: 16,
+                  padding: '8px 16px',
+                  maxWidth: 520,
+                  fontSize: 15,
+                  boxShadow: '0 1px 4px #0001',
+                  fontFamily: 'inherit',
+                }}>
+                  Chargement des repas...
+                </div>
+              </div>
+            )}
+            
+            {errorMeals && (
+              <div style={{
+                display: 'flex',
+                justifyContent: 'flex-start',
+                marginBottom: 8,
+                fontFamily: 'inherit',
+              }}>
+                <div style={{
+                  background: '#fef2f2',
+                  color: '#dc2626',
+                  borderRadius: 16,
+                  padding: '8px 16px',
+                  maxWidth: 520,
+                  fontSize: 15,
+                  boxShadow: '0 1px 4px #0001',
+                  fontFamily: 'inherit',
+                }}>
+                  Erreur: {errorMeals}
+                </div>
+              </div>
+            )}
+            
+            {!loadingMeals && !errorMeals && meals.length > 0 && (
+              <div style={{
+                display: 'flex',
+                justifyContent: 'flex-start',
+                marginBottom: 8,
+                fontFamily: 'inherit',
+              }}>
+                <div style={{
+                  background: '#f0f9ff',
+                  color: '#1e293b',
+                  borderRadius: 16,
+                  padding: '16px',
+                  maxWidth: 520,
+                  fontSize: 15,
+                  boxShadow: '0 1px 4px #0001',
+                  fontFamily: 'inherit',
+                }}>
+                  <div style={{ fontWeight: 600, marginBottom: 8, color: '#2563eb' }}>
+                    📅 Repas du {new Date(selectedDate).toLocaleDateString('fr-FR')}
+                  </div>
+                  {meals.map((meal, index) => (
+                    <div key={index} style={{ 
+                      marginBottom: 8, 
+                      padding: '8px 12px', 
+                      background: 'white', 
+                      borderRadius: 8,
+                      border: '1px solid #e2e8f0'
+                    }}>
+                      <div style={{ fontWeight: 600, color: '#374151' }}>
+                        {meal.name} ({meal.meal_type})
+                        </div>
+                      <div style={{ fontSize: 14, color: '#6b7280', marginBottom: 4 }}>
+                        {meal.description}
                       </div>
-                    <div style={{ fontSize: 14, color: '#6b7280', marginBottom: 4 }}>
-                      {meal.description}
-                    </div>
-                    <div style={{ fontSize: 13, color: '#059669' }}>
-                      {meal.calories} kcal | {meal.proteins}g protéines | {meal.carbohydrates}g glucides | {meal.fats}g lipides | {meal.fiber}g fibres
+                      <div style={{ fontSize: 13, color: '#059669' }}>
+                        {meal.calories} kcal | {meal.proteins}g protéines | {meal.carbohydrates}g glucides | {meal.fats}g lipides | {meal.fiber}g fibres
                 </div>
                 </div>
                 ))}
@@ -618,5 +643,6 @@ export default function Chat() {
         </div>
       </Card>
     </div>
+    </>
   );
 } 

@@ -3,6 +3,7 @@ import { Button, Flex, Card } from '@radix-ui/themes';
 import { useNavigate } from 'react-router-dom';
 import { VictoryChart, VictoryBar, VictoryAxis, VictoryTheme, VictoryLine, VictoryLegend } from 'victory';
 import { useAuth } from '../auth';
+import * as AlertDialog from '@radix-ui/react-alert-dialog';
 
 const macroOptions = [
   { value: 'calories', label: 'Calories' },
@@ -45,7 +46,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { jwt } = useAuth();
+  const { jwt, logout } = useAuth();
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
   useEffect(() => {
     async function fetchMeals() {
@@ -58,13 +60,18 @@ export default function Dashboard() {
           },
         });
         if (res.status === 401) {
-          throw new Error('Session expirée ou non autorisée. Veuillez vous reconnecter.');
+          setShowLogoutDialog(true);
+          return;
         }
         if (!res.ok) throw new Error('Erreur lors de la récupération des repas');
         const data = await res.json();
         setMeals(data);
       } catch (e: any) {
-        setError(e.message || 'Erreur inconnue');
+        if (e.message && e.message.includes('401')) {
+          setShowLogoutDialog(true);
+        } else {
+          setError(e.message || 'Erreur inconnue');
+        }
       } finally {
         setLoading(false);
       }
@@ -89,113 +96,138 @@ export default function Dashboard() {
   const xTickValues = data.map((d, i) => (i % 2 === 0 ? d.x : ''));
 
   return (
-    <div style={{ width: '100vw', height: '100vh', background: 'transparent', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start' }}>
-      {/* Bouton retour en haut à gauche */}
-      <div style={{ position: 'absolute', top: 24, left: 24, zIndex: 10 }}>
-        <Button color="blue" variant="soft" size="3" style={{ borderRadius: 999 }} onClick={() => navigate('/chat')}>
-          Retour
-        </Button>
-      </div>
-      <Flex gap="5" wrap="wrap" justify="center" style={{ margin: '32px 0 16px 0' }}>
-        {macroOptions.map(opt => (
-          <Button
-            key={opt.value}
-            variant={macro === opt.value ? "solid" : "soft"}
-            color={macro === opt.value ? "blue" : "gray"}
-            size="3"
-            style={{ 
-              borderRadius: 999,
-              minWidth: 120,
-              fontWeight: macro === opt.value ? 600 : 400,
-              transition: 'all 0.2s ease',
-              margin: 4
-            }}
-            onClick={() => setMacro(opt.value)}
-          >
-            {opt.label}
+    <>
+      <AlertDialog.Root open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <AlertDialog.Portal>
+          <AlertDialog.Overlay className="fixed inset-0 bg-black/40 z-50" />
+          <AlertDialog.Content className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-xl p-8 max-w-sm w-full flex flex-col items-center">
+            <AlertDialog.Title className="text-xl font-bold mb-2 text-red-600">Session expirée</AlertDialog.Title>
+            <AlertDialog.Description className="mb-6 text-gray-700 text-center">
+              Votre session a expiré ou vous n'êtes plus authentifié.<br />Veuillez vous reconnecter.
+            </AlertDialog.Description>
+            <AlertDialog.Action asChild>
+              <button
+                className="px-6 py-3 rounded-lg bg-blue-700 text-white font-semibold hover:bg-blue-800 transition text-base w-full"
+                onClick={() => {
+                  logout();
+                  setShowLogoutDialog(false);
+                  window.location.href = '/login';
+                }}
+              >
+                Se déconnecter
+              </button>
+            </AlertDialog.Action>
+          </AlertDialog.Content>
+        </AlertDialog.Portal>
+      </AlertDialog.Root>
+      <div style={{ width: '100vw', height: '100vh', background: 'transparent', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start' }}>
+        {/* Bouton retour en haut à gauche */}
+        <div style={{ position: 'absolute', top: 24, left: 24, zIndex: 10 }}>
+          <Button color="blue" variant="soft" size="3" style={{ borderRadius: 999 }} onClick={() => navigate('/chat')}>
+            Retour
           </Button>
-        ))}
-      </Flex>
-      <Card style={{ width: '100%', maxWidth: 900, margin: '0 auto', borderRadius: 20, boxShadow: '0 2px 24px #0002', padding: 32, background: 'var(--color-panel-solid)', minHeight: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ width: '100%', height: 400 }}>
-          {loading ? (
-            <div style={{ textAlign: 'center', marginTop: 100, fontSize: 22, color: '#2563eb' }}>Chargement…</div>
-          ) : error ? (
-            <div style={{ textAlign: 'center', marginTop: 100, fontSize: 22, color: 'red' }}>{error}</div>
-          ) : data.length === 0 ? (
-            <div style={{ textAlign: 'center', marginTop: 100, fontSize: 22, color: '#2563eb' }}>Aucune donnée à afficher</div>
-          ) : (
-            <VictoryChart
-              theme={VictoryTheme.material}
-              domainPadding={20}
-              width={800}
-              height={400}
-            >
-              <VictoryAxis
-                tickValues={data.map((d, _i) => d.x)}
-                tickFormat={(_t, i) => xTickValues[i]}
-                style={{
-                  tickLabels: { fontSize: 13, angle: 40, padding: 20, fill: '#64748b' },
-                  grid: { stroke: 'none' },
-                  axis: { stroke: '#64748b', strokeWidth: 1 }
-                }}
-              />
-              <VictoryAxis
-                dependentAxis
-                style={{
-                  tickLabels: { fontSize: 15, fill: '#64748b' },
-                  grid: { stroke: 'none' },
-                  axis: { stroke: '#64748b', strokeWidth: 1 }
-                }}
-              />
-              <VictoryBar
-                data={data}
-                style={{
-                  data: {
-                    fill: '#3b82f6',
-                    stroke: '#1e293b',
-                    strokeWidth: 1,
-                    width: 12,
-                    opacity: 0.85,
-                  },
-                }}
-                barWidth={16}
-              />
-              <VictoryLine
-                y={() => allTimeAvg}
-                style={{ data: { stroke: '#2563eb', strokeDasharray: '6,6', strokeWidth: 2, opacity: 0.7 } }}
-              />
-              <VictoryLine
-                y={() => avg30}
-                style={{ data: { stroke: '#60a5fa', strokeDasharray: '4,4', strokeWidth: 2, opacity: 0.7 } }}
-              />
-              <VictoryLine
-                y={() => avg7}
-                style={{ data: { stroke: '#93c5fd', strokeDasharray: '2,6', strokeWidth: 2, opacity: 0.7 } }}
-              />
-            </VictoryChart>
-          )}
         </div>
-      </Card>
-      {/* Légende sous le graphe */}
-      <div style={{ width: 900, margin: '0 auto', marginTop: 8, display: 'flex', justifyContent: 'flex-end' }}>
-        <VictoryLegend
-          orientation="horizontal"
-          gutter={24}
-          style={{ labels: { fontSize: 13, fill: '#64748b' } }}
-          data={[
-            { name: 'Moyenne all time', symbol: { fill: '#2563eb', type: 'minus', strokeDasharray: '6,6' } },
-            { name: 'Moyenne 30j', symbol: { fill: '#60a5fa', type: 'minus', strokeDasharray: '4,4' } },
-            { name: 'Moyenne 7j', symbol: { fill: '#93c5fd', type: 'minus', strokeDasharray: '2,6' } },
-          ]}
-        />
+        <Flex gap="5" wrap="wrap" justify="center" style={{ margin: '32px 0 16px 0' }}>
+          {macroOptions.map(opt => (
+            <Button
+              key={opt.value}
+              variant={macro === opt.value ? "solid" : "soft"}
+              color={macro === opt.value ? "blue" : "gray"}
+              size="3"
+              style={{ 
+                borderRadius: 999,
+                minWidth: 120,
+                fontWeight: macro === opt.value ? 600 : 400,
+                transition: 'all 0.2s ease',
+                margin: 4
+              }}
+              onClick={() => setMacro(opt.value)}
+            >
+              {opt.label}
+            </Button>
+          ))}
+        </Flex>
+        <Card style={{ width: '100%', maxWidth: 900, margin: '0 auto', borderRadius: 20, boxShadow: '0 2px 24px #0002', padding: 32, background: 'var(--color-panel-solid)', minHeight: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '100%', height: 400 }}>
+            {loading ? (
+              <div style={{ textAlign: 'center', marginTop: 100, fontSize: 22, color: '#2563eb' }}>Chargement…</div>
+            ) : error ? (
+              <div style={{ textAlign: 'center', marginTop: 100, fontSize: 22, color: 'red' }}>{error}</div>
+            ) : data.length === 0 ? (
+              <div style={{ textAlign: 'center', marginTop: 100, fontSize: 22, color: '#2563eb' }}>Aucune donnée à afficher</div>
+            ) : (
+              <VictoryChart
+                theme={VictoryTheme.material}
+                domainPadding={20}
+                width={800}
+                height={400}
+              >
+                <VictoryAxis
+                  tickValues={data.map((d, _i) => d.x)}
+                  tickFormat={(_t, i) => xTickValues[i]}
+                  style={{
+                    tickLabels: { fontSize: 13, angle: 40, padding: 20, fill: '#64748b' },
+                    grid: { stroke: 'none' },
+                    axis: { stroke: '#64748b', strokeWidth: 1 }
+                  }}
+                />
+                <VictoryAxis
+                  dependentAxis
+                  style={{
+                    tickLabels: { fontSize: 15, fill: '#64748b' },
+                    grid: { stroke: 'none' },
+                    axis: { stroke: '#64748b', strokeWidth: 1 }
+                  }}
+                />
+                <VictoryBar
+                  data={data}
+                  style={{
+                    data: {
+                      fill: '#3b82f6',
+                      stroke: '#1e293b',
+                      strokeWidth: 1,
+                      width: 12,
+                      opacity: 0.85,
+                    },
+                  }}
+                  barWidth={16}
+                />
+                <VictoryLine
+                  y={() => allTimeAvg}
+                  style={{ data: { stroke: '#2563eb', strokeDasharray: '6,6', strokeWidth: 2, opacity: 0.7 } }}
+                />
+                <VictoryLine
+                  y={() => avg30}
+                  style={{ data: { stroke: '#60a5fa', strokeDasharray: '4,4', strokeWidth: 2, opacity: 0.7 } }}
+                />
+                <VictoryLine
+                  y={() => avg7}
+                  style={{ data: { stroke: '#93c5fd', strokeDasharray: '2,6', strokeWidth: 2, opacity: 0.7 } }}
+                />
+              </VictoryChart>
+            )}
+          </div>
+        </Card>
+        {/* Légende sous le graphe */}
+        <div style={{ width: 900, margin: '0 auto', marginTop: 8, display: 'flex', justifyContent: 'flex-end' }}>
+          <VictoryLegend
+            orientation="horizontal"
+            gutter={24}
+            style={{ labels: { fontSize: 13, fill: '#64748b' } }}
+            data={[
+              { name: 'Moyenne all time', symbol: { fill: '#2563eb', type: 'minus', strokeDasharray: '6,6' } },
+              { name: 'Moyenne 30j', symbol: { fill: '#60a5fa', type: 'minus', strokeDasharray: '4,4' } },
+              { name: 'Moyenne 7j', symbol: { fill: '#93c5fd', type: 'minus', strokeDasharray: '2,6' } },
+            ]}
+          />
+        </div>
+        {/* Moyennes sous le graphe */}
+        <div style={{ marginTop: 24, textAlign: 'center', fontSize: 18, color: '#2563eb', fontWeight: 500 }}>
+          Moyenne all time : <span style={{ color: '#2563eb' }}>{allTimeAvg.toFixed(1)}</span> &nbsp;|&nbsp;
+          Moyenne 30j : <span style={{ color: '#2563eb' }}>{avg30.toFixed(1)}</span> &nbsp;|&nbsp;
+          Moyenne 7j : <span style={{ color: '#2563eb' }}>{avg7.toFixed(1)}</span>
+        </div>
       </div>
-      {/* Moyennes sous le graphe */}
-      <div style={{ marginTop: 24, textAlign: 'center', fontSize: 18, color: '#2563eb', fontWeight: 500 }}>
-        Moyenne all time : <span style={{ color: '#2563eb' }}>{allTimeAvg.toFixed(1)}</span> &nbsp;|&nbsp;
-        Moyenne 30j : <span style={{ color: '#2563eb' }}>{avg30.toFixed(1)}</span> &nbsp;|&nbsp;
-        Moyenne 7j : <span style={{ color: '#2563eb' }}>{avg7.toFixed(1)}</span>
-      </div>
-    </div>
+    </>
   );
 } 
