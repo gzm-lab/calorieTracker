@@ -120,53 +120,51 @@ export default function Dashboard() {
           </AlertDialog.Content>
         </AlertDialog.Portal>
       </AlertDialog.Root>
-      <div style={{ width: '100vw', minHeight: '100vh', background: 'transparent', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', overflowY: 'auto' }}>
+      <div style={{ width: '100%', minHeight: '100vh', background: 'transparent', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', overflowY: 'auto' }}>
         {/* Bouton retour en haut à gauche */}
-        <div style={{ position: 'absolute', top: 24, left: 24, zIndex: 10 }}>
+        <div style={{ position: 'sticky', top: 0, left: 0, zIndex: 10, background: 'rgba(248,250,252,0.95)', width: '100%', padding: 12 }}>
           <Button color="blue" variant="soft" size="3" style={{ borderRadius: 999 }} onClick={() => navigate('/chat')}>
             Retour
           </Button>
         </div>
-        <Flex gap="5" wrap="wrap" justify="center" style={{ margin: '32px 0 16px 0' }}>
-          {macroOptions.map(opt => (
-            <Button
-              key={opt.value}
-              variant={macro === opt.value ? "solid" : "soft"}
-              color={macro === opt.value ? "blue" : "gray"}
-              size="3"
-              style={{ 
-                borderRadius: 999,
-                minWidth: 120,
-                fontWeight: macro === opt.value ? 600 : 400,
-                transition: 'all 0.2s ease',
-                margin: 4
-              }}
-              onClick={() => setMacro(opt.value)}
-            >
-              {opt.label}
-            </Button>
-          ))}
-        </Flex>
-        <Card style={{ width: '100%', maxWidth: '100vw', margin: '0 auto', borderRadius: 20, boxShadow: '0 2px 24px #0002', padding: 32, background: 'var(--color-panel-solid)', minHeight: 400, display: 'flex', alignItems: 'center', justifyContent: 'center', overflowX: 'auto' }}>
-          <div style={{ width: 900, maxWidth: '100%', height: 400 }}>
+        {/* Filtres macros scrollables */}
+        <div style={{ width: '100%', overflowX: 'auto', margin: '16px 0' }}>
+          <Flex gap="3" wrap="nowrap" justify="start" style={{ minWidth: 320, padding: '0 8px' }}>
+            {macroOptions.map(opt => (
+              <Button
+                key={opt.value}
+                variant={macro === opt.value ? "solid" : "soft"}
+                color={macro === opt.value ? "blue" : "gray"}
+                size="3"
+                style={{ borderRadius: 999, minWidth: 120, fontWeight: macro === opt.value ? 600 : 400, transition: 'all 0.2s', margin: 2 }}
+                onClick={() => setMacro(opt.value)}
+              >
+                {opt.label}
+              </Button>
+            ))}
+          </Flex>
+        </div>
+        {/* Bloc Graphe */}
+        <Card style={{ width: '100%', maxWidth: 500, margin: '0 auto', borderRadius: 20, boxShadow: '0 2px 24px #0002', padding: 16, background: 'var(--color-panel-solid)', minHeight: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
+          <div style={{ width: '100%', height: 220 }}>
             {loading ? (
-              <div style={{ textAlign: 'center', marginTop: 100, fontSize: 22, color: '#2563eb' }}>Chargement…</div>
+              <div style={{ textAlign: 'center', marginTop: 40, fontSize: 18, color: '#2563eb' }}>Chargement…</div>
             ) : error ? (
-              <div style={{ textAlign: 'center', marginTop: 100, fontSize: 22, color: 'red' }}>{error}</div>
+              <div style={{ textAlign: 'center', marginTop: 40, fontSize: 18, color: 'red' }}>{error}</div>
             ) : data.length === 0 ? (
-              <div style={{ textAlign: 'center', marginTop: 100, fontSize: 22, color: '#2563eb' }}>Aucune donnée à afficher</div>
+              <div style={{ textAlign: 'center', marginTop: 40, fontSize: 18, color: '#2563eb' }}>Aucune donnée à afficher</div>
             ) : (
               <VictoryChart
                 theme={VictoryTheme.material}
                 domainPadding={20}
-                width={800}
-                height={400}
+                width={400}
+                height={200}
               >
                 <VictoryAxis
                   tickValues={data.map((d, _i) => d.x)}
                   tickFormat={(_t, i) => xTickValues[i]}
                   style={{
-                    tickLabels: { fontSize: 13, angle: 40, padding: 20, fill: '#64748b' },
+                    tickLabels: { fontSize: 10, angle: 40, padding: 12, fill: '#64748b' },
                     grid: { stroke: 'none' },
                     axis: { stroke: '#64748b', strokeWidth: 1 }
                   }}
@@ -174,7 +172,7 @@ export default function Dashboard() {
                 <VictoryAxis
                   dependentAxis
                   style={{
-                    tickLabels: { fontSize: 15, fill: '#64748b' },
+                    tickLabels: { fontSize: 11, fill: '#64748b' },
                     grid: { stroke: 'none' },
                     axis: { stroke: '#64748b', strokeWidth: 1 }
                   }}
@@ -186,11 +184,11 @@ export default function Dashboard() {
                       fill: '#3b82f6',
                       stroke: '#1e293b',
                       strokeWidth: 1,
-                      width: 12,
+                      width: 8,
                       opacity: 0.85,
                     },
                   }}
-                  barWidth={16}
+                  barWidth={10}
                 />
                 <VictoryLine
                   y={() => allTimeAvg}
@@ -209,24 +207,24 @@ export default function Dashboard() {
           </div>
         </Card>
         {/* Légende sous le graphe */}
-        <div style={{ width: 900, margin: '0 auto', marginTop: 8, display: 'flex', justifyContent: 'flex-end' }}>
+        <Card style={{ width: '100%', maxWidth: 500, margin: '0 auto', borderRadius: 16, boxShadow: '0 1px 8px #0001', padding: 12, background: 'white', marginBottom: 16 }}>
           <VictoryLegend
             orientation="horizontal"
-            gutter={24}
-            style={{ labels: { fontSize: 13, fill: '#64748b' } }}
+            gutter={16}
+            style={{ labels: { fontSize: 12, fill: '#64748b' } }}
             data={[
               { name: 'Moyenne all time', symbol: { fill: '#2563eb', type: 'minus', strokeDasharray: '6,6' } },
               { name: 'Moyenne 30j', symbol: { fill: '#60a5fa', type: 'minus', strokeDasharray: '4,4' } },
               { name: 'Moyenne 7j', symbol: { fill: '#93c5fd', type: 'minus', strokeDasharray: '2,6' } },
             ]}
           />
-        </div>
+        </Card>
         {/* Moyennes sous le graphe */}
-        <div style={{ marginTop: 24, textAlign: 'center', fontSize: 18, color: '#2563eb', fontWeight: 500 }}>
+        <Card style={{ width: '100%', maxWidth: 500, margin: '0 auto', borderRadius: 16, boxShadow: '0 1px 8px #0001', padding: 16, background: 'white', marginBottom: 24, textAlign: 'center', fontSize: 16, color: '#2563eb', fontWeight: 500 }}>
           Moyenne all time : <span style={{ color: '#2563eb' }}>{allTimeAvg.toFixed(1)}</span> &nbsp;|&nbsp;
           Moyenne 30j : <span style={{ color: '#2563eb' }}>{avg30.toFixed(1)}</span> &nbsp;|&nbsp;
           Moyenne 7j : <span style={{ color: '#2563eb' }}>{avg7.toFixed(1)}</span>
-        </div>
+        </Card>
       </div>
     </>
   );
