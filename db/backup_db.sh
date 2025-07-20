@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Répertoire de sauvegarde (modifiable si besoin)
-BACKUP_DIR="/home/pi/backups"
+BACKUP_DIR="/home/gzi/Desktop/calorie/backup"
 CSV_FILE="$BACKUP_DIR/calorietrack_backup.csv"
 TABLE="meals"  # Table principale à exporter
 DB_NAME="calorietrack"
