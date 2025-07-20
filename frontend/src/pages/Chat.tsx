@@ -220,6 +220,15 @@ export default function Chat() {
     boxSizing: 'border-box' as const,
   };
 
+  // Définition des macros pour la mosaïque
+  const macroCards = [
+    { key: 'calories', label: 'Calories', icon: '🔥', color: '#6366f1', bg: '#eef2ff', unit: 'kcal' },
+    { key: 'proteins', label: 'Protéines', icon: '🥩', color: '#10b981', bg: '#ecfdf5', unit: 'g' },
+    { key: 'carbohydrates', label: 'Glucides', icon: '🍞', color: '#f59e42', bg: '#fff7ed', unit: 'g' },
+    { key: 'fats', label: 'Lipides', icon: '🥑', color: '#eab308', bg: '#fefce8', unit: 'g' },
+    { key: 'fiber', label: 'Fibres', icon: '🥕', color: '#a21caf', bg: '#f3e8ff', unit: 'g' },
+  ];
+
   return (
     <>
       <AlertDialog.Root open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
@@ -606,7 +615,7 @@ export default function Chat() {
           )}
         </form>
       </Card>
-      {/* Bloc Total journée séparé */}
+      {/* Bloc Total journée mosaïque */}
       <Card style={{
         width: '100%',
         maxWidth: 800,
@@ -618,13 +627,29 @@ export default function Chat() {
         boxShadow: '0 2px 16px #0001',
         fontFamily: 'inherit',
       }}>
-        <h2 style={{ fontWeight: 600, fontSize: 20, marginBottom: 16, color: '#2563eb' }}>Total de la journée</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
-          <input readOnly value={dailyTotals.calories + ' kcal'} style={macroInputStyle} />
-          <input readOnly value={dailyTotals.proteins + ' g protéines'} style={macroInputStyle} />
-          <input readOnly value={dailyTotals.carbohydrates + ' g glucides'} style={macroInputStyle} />
-          <input readOnly value={dailyTotals.fats + ' g lipides'} style={macroInputStyle} />
-          <input readOnly value={dailyTotals.fiber + ' g fibres'} style={macroInputStyle} />
+        <h2 style={{ fontWeight: 600, fontSize: 20, marginBottom: 24, color: '#2563eb', textAlign: 'center' }}>Total de la journée</h2>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+          gap: 20,
+          marginBottom: 24,
+        }}>
+          {macroCards.map(card => (
+            <div key={card.key} style={{
+              background: card.bg,
+              borderRadius: 20,
+              boxShadow: '0 2px 12px #0001',
+              padding: 20,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              minWidth: 0,
+            }}>
+              <span style={{ fontSize: 32, marginBottom: 8 }}>{card.icon}</span>
+              <div style={{ fontWeight: 700, fontSize: 17, color: card.color, marginBottom: 2 }}>{card.label}</div>
+              <div style={{ fontWeight: 800, fontSize: 26, color: '#1e293b' }}>{dailyTotals[card.key as keyof typeof dailyTotals].toFixed(1)} <span style={{ fontWeight: 500, fontSize: 15, color: '#64748b' }}>{card.unit}</span></div>
+            </div>
+          ))}
         </div>
         <div style={{ textAlign: 'center' }}>
           <button
