@@ -1,125 +1,123 @@
-# CalorieTrack Web
+# 🥗 CalorieTrack
 
-Ce projet est la version web de l'application CalorieTrack, conçue pour tourner sur une Raspberry Pi et développée sur Mac. L'application permet de suivre ses repas et d'estimer les calories consommées grâce à un chatbot alimenté par une intelligence artificielle locale. L'interface s'inspire du design Apple pour une expérience utilisateur moderne et élégante.
+Application web self-hosted de suivi nutritionnel avec **IA conversationnelle** — décris ce que tu as mangé en langage naturel, un LLM local estime les calories et les macros et les enregistre automatiquement.
 
-## Fonctionnalités principales
+Conçu pour tourner sur un **Raspberry Pi** (ou tout serveur Linux), déployable en une commande Docker.
 
-- Interface web moderne (React + Radix UI + Tailwind CSS)
-- Saisie des repas via un chat avec une IA locale (Ollama)
-- Calcul automatique des calories
-- Historique des repas et statistiques personnalisées
-- Authentification sécurisée (multi-utilisateur, gestion par admin)
-- Application dockerisée pour compatibilité Mac/Raspberry Pi
+## ✨ Fonctionnalités
 
-## Architecture technique
+- 💬 **Chat IA** — décris ton repas en texte naturel, le LLM (Ollama) parse et enregistre les macros
+- 📊 **Dashboard** — visualisation des calories, protéines, glucides, lipides et fibres du jour
+- 📅 **Historique** — liste paginée de tous les repas enregistrés
+- 🔐 **Authentification JWT** — multi-utilisateur, sessions sécurisées
+- 🐳 **Docker Compose** — déploiement one-liner
 
-- **Frontend** : React (TypeScript), Radix UI, Tailwind CSS
-- **Backend** : Python (FastAPI), FastAPI Users (authentification)
-- **IA locale** : Ollama (modèle LLM, API REST locale)
-- **Base de données** : PostgreSQL
-- **Orchestration** : Docker & Docker Compose
+## 🖥️ Stack technique
 
-### Schéma d'architecture
+| Couche | Technologie |
+|---|---|
+| Frontend | React 19 + TypeScript + Vite + Tailwind CSS + Radix UI |
+| Backend | Python + FastAPI + FastAPI Users |
+| IA | [Ollama](https://ollama.ai) (LLM local) |
+| Base de données | PostgreSQL + SQLAlchemy (async) |
+| Charts | Victory (React) |
+| DevOps | Docker Compose + Nginx |
 
-```
-[ Utilisateur ]
-      |
-      v
-[ Frontend React (Radix UI/Tailwind) ]
-      |
-      v
-[ Backend FastAPI (auth, logique métier, API) ]
-      |         \
-      v          v
-[ PostgreSQL ]  [ Ollama (IA locale) ]
-```
+## 🚀 Quick Start (Docker)
 
-- Le frontend communique avec le backend via API REST.
-- Le backend gère l'authentification, la logique métier, l'accès à la base de données et relaie les requêtes à l'IA locale.
-- Chaque utilisateur a son propre historique et contexte de chat.
+### Prérequis
 
-## Structure des dossiers
+- Docker & Docker Compose
+- [Ollama](https://ollama.ai) installé et accessible sur le réseau
 
-```
-calorieTrackV2/
-│
-├── frontend/         # Application React (Radix UI, Tailwind)
-├── backend/          # API FastAPI, gestion utilisateurs, logique métier
-├── db/               # Scripts d'initialisation PostgreSQL, migrations
-├── ollama/           # Configurations pour Ollama (modèle, scripts)
-├── docker-compose.yml
-├── README.md
-└── ...
-```
+### 1. Clone & configure
 
-## Prérequis
-- Python 3.10+
-- Node.js 18+
-- Docker & Docker Compose (recommandé pour la prod)
-
-## Variables d'environnement à définir
-
-### Backend (`backend/.env` à créer, ne pas versionner)
-- `DATABASE_URL` : URL de connexion à la base Postgres (ex : `postgresql+asyncpg://user:password@db:5432/calorietrack`)
-- `SECRET` : clé secrète pour le JWT (ex : une chaîne aléatoire longue)
-
-### Frontend (`frontend/.env` à créer, ne pas versionner)
-- `VITE_API_URL` : URL de l'API backend (ex : `http://localhost:8000`)
-
-## Lancer en local (développement)
-
-### Backend
 ```bash
+git clone https://github.com/gzm-lab/calorieTracker.git
+cd calorieTracker
+cp .env.example .env   # puis édite les variables
+```
+
+Variables d'environnement clés (`.env`) :
+
+| Variable | Description | Exemple |
+|---|---|---|
+| `DATABASE_URL` | URL PostgreSQL | `postgresql+asyncpg://user:pass@db/calories` |
+| `SECRET_KEY` | Clé JWT (génère avec `openssl rand -hex 32`) | `abc123...` |
+| `OLLAMA_URL` | URL de ton instance Ollama | `http://192.168.1.10:11434` |
+| `OLLAMA_MODEL` | Modèle à utiliser | `llama3` |
+
+### 2. Lance l'application
+
+```bash
+docker compose up -d
+```
+
+L'app est disponible sur **http://localhost** (ou l'IP de ton Pi).
+
+### 3. Développement local
+
+```bash
+# Backend
 cd backend
-python -m venv venv
-source venv/bin/activate
 pip install -r requirements.txt
-# Créer le fichier .env et remplir les variables
 uvicorn main:app --reload
-```
 
-### Frontend
-```bash
+# Frontend (dans un autre terminal)
 cd frontend
 npm install
 npm run dev
 ```
 
-## Lancer avec Docker (recommandé pour la prod ou sur Raspberry)
-```bash
-docker-compose up --build
+## 🗂️ Architecture
+
+```
+calorieTracker/
+├── backend/
+│   ├── main.py          # FastAPI — endpoints REST + auth JWT
+│   ├── models.py         # SQLAlchemy — User, Meal
+│   ├── schemas.py        # Pydantic — validation entrées/sorties
+│   ├── user_manager.py   # Gestion utilisateurs (FastAPI Users)
+│   ├── db.py             # Connexion DB async
+│   ├── seed_data.py      # Données de démo
+│   ├── Dockerfile
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   │   ├── pages/
+│   │   │   ├── Chat.tsx        # Interface chat IA (plat principal)
+│   │   │   ├── Dashboard.tsx   # Graphiques nutritionnels
+│   │   │   └── Historique.tsx  # Historique des repas
+│   │   ├── auth.tsx            # Contexte d'authentification
+│   │   └── App.tsx             # Routing React
+│   └── Dockerfile
+├── db/
+│   └── backup_db.sh     # Script de sauvegarde PostgreSQL
+└── docker-compose.yml
 ```
 
-## Initialiser la base de données
-- Utilise le script `backend/seed_data.py` pour remplir la base avec des données de test si besoin.
+## 📡 API Endpoints
 
-## Sécurité
-- **Ne versionne jamais les fichiers `.env` ou contenant des secrets !**
-- Les mots de passe, clés et tokens doivent être passés via les variables d'environnement.
+| Méthode | Route | Description |
+|---|---|---|
+| `POST` | `/auth/jwt/login` | Connexion → JWT token |
+| `POST` | `/meals/` | Créer un repas |
+| `GET` | `/meals/` | Lister les repas |
+| `GET` | `/meals/stats/daily` | Stats journalières (calories + macros) |
+| `PUT` | `/meals/{id}` | Modifier un repas |
+| `DELETE` | `/meals/{id}` | Supprimer un repas |
 
-## Déploiement sur Raspberry Pi
-- Clone le repo sur la Raspberry
-- Configure les variables d'environnement
-- Lance avec Docker Compose
+## 🔒 Sécurité
 
-## Authentification & gestion des utilisateurs
+- Authentification JWT Bearer (FastAPI Users)
+- Mots de passe hashés bcrypt
+- Isolation des données par utilisateur (FK `user_id` sur chaque repas)
+- Variables sensibles dans `.env` (jamais committées)
+- Nginx comme reverse proxy en production
 
-- Authentification sécurisée via FastAPI Users (JWT)
-- Création des utilisateurs par l'admin (interface ou script)
-- Chaque utilisateur a son propre historique et contexte IA
+## 📋 À faire
 
-## À faire
-
-- Développement de l'interface web (chat, historique, stats)
-- Intégration de l'authentification
-- Intégration du backend avec Ollama et PostgreSQL
-- Dockerisation complète
-- (Plus tard) Fine-tuning du modèle IA
-
-## Intégration avec un site web principal
-
-Ce projet est conçu pour pouvoir être intégré derrière un site web principal (par exemple en sous-domaine, sous-répertoire ou via un reverse proxy). L'intégration peut se faire selon les besoins de l'infrastructure existante, sans modification majeure de l'architecture de l'application.
-
----
-
-Pour toute question, ouvre une issue ou contacte le mainteneur. 
+- [ ] Notifications push (rappels de repas)
+- [ ] Export CSV/PDF des données nutritionnelles
+- [ ] Mode hors-ligne (PWA)
+- [ ] Support multi-langue
