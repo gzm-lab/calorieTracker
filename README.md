@@ -1,61 +1,61 @@
 # 🥗 CalorieTrack
 
-Application web self-hosted de suivi nutritionnel avec **IA conversationnelle** — décris ce que tu as mangé en langage naturel, un LLM local estime les calories et les macros et les enregistre automatiquement.
+A self-hosted nutrition tracking web app with **AI-powered chat** — describe what you ate in natural language, and a local LLM estimates the calories and macros and saves them automatically.
 
-Conçu pour tourner sur un **Raspberry Pi** (ou tout serveur Linux), déployable en une commande Docker.
+Designed to run on a **Raspberry Pi** (or any Linux server), deployable in a single Docker command.
 
-## ✨ Fonctionnalités
+## ✨ Features
 
-- 💬 **Chat IA** — décris ton repas en texte naturel, le LLM (Ollama) parse et enregistre les macros
-- 📊 **Dashboard** — visualisation des calories, protéines, glucides, lipides et fibres du jour
-- 📅 **Historique** — liste paginée de tous les repas enregistrés
-- 🔐 **Authentification JWT** — multi-utilisateur, sessions sécurisées
-- 🐳 **Docker Compose** — déploiement one-liner
+- 💬 **AI Chat** — describe your meal in plain text, the LLM (Ollama) parses and logs your macros
+- 📊 **Dashboard** — visualize daily calories, protein, carbs, fats, and fiber
+- 📅 **History** — paginated list of all logged meals
+- 🔐 **JWT Authentication** — multi-user, secure sessions
+- 🐳 **Docker Compose** — one-command deployment
 
-## 🖥️ Stack technique
+## 🖥️ Tech Stack
 
-| Couche | Technologie |
+| Layer | Technology |
 |---|---|
 | Frontend | React 19 + TypeScript + Vite + Tailwind CSS + Radix UI |
 | Backend | Python + FastAPI + FastAPI Users |
-| IA | [Ollama](https://ollama.ai) (LLM local) |
-| Base de données | PostgreSQL + SQLAlchemy (async) |
+| AI | [Ollama](https://ollama.ai) (local LLM) |
+| Database | PostgreSQL + SQLAlchemy (async) |
 | Charts | Victory (React) |
 | DevOps | Docker Compose + Nginx |
 
 ## 🚀 Quick Start (Docker)
 
-### Prérequis
+### Prerequisites
 
 - Docker & Docker Compose
-- [Ollama](https://ollama.ai) installé et accessible sur le réseau
+- [Ollama](https://ollama.ai) installed and reachable on the network
 
 ### 1. Clone & configure
 
 ```bash
 git clone https://github.com/gzm-lab/calorieTracker.git
 cd calorieTracker
-cp .env.example .env   # puis édite les variables
+cp .env.example .env   # then edit the variables
 ```
 
-Variables d'environnement clés (`.env`) :
+Key environment variables (`.env`):
 
-| Variable | Description | Exemple |
+| Variable | Description | Example |
 |---|---|---|
-| `DATABASE_URL` | URL PostgreSQL | `postgresql+asyncpg://user:pass@db/calories` |
-| `SECRET_KEY` | Clé JWT (génère avec `openssl rand -hex 32`) | `abc123...` |
-| `OLLAMA_URL` | URL de ton instance Ollama | `http://192.168.1.10:11434` |
-| `OLLAMA_MODEL` | Modèle à utiliser | `llama3` |
+| `DATABASE_URL` | PostgreSQL URL | `postgresql+asyncpg://user:pass@db/calories` |
+| `SECRET_KEY` | JWT secret (generate with `openssl rand -hex 32`) | `abc123...` |
+| `OLLAMA_URL` | Your Ollama instance URL | `http://192.168.1.10:11434` |
+| `OLLAMA_MODEL` | Model to use | `llama3` |
 
-### 2. Lance l'application
+### 2. Start the app
 
 ```bash
 docker compose up -d
 ```
 
-L'app est disponible sur **http://localhost** (ou l'IP de ton Pi).
+The app is available at **http://localhost** (or your Pi's IP address).
 
-### 3. Développement local
+### 3. Local development
 
 ```bash
 # Backend
@@ -63,7 +63,7 @@ cd backend
 pip install -r requirements.txt
 uvicorn main:app --reload
 
-# Frontend (dans un autre terminal)
+# Frontend (in a separate terminal)
 cd frontend
 npm install
 npm run dev
@@ -74,50 +74,50 @@ npm run dev
 ```
 calorieTracker/
 ├── backend/
-│   ├── main.py          # FastAPI — endpoints REST + auth JWT
-│   ├── models.py         # SQLAlchemy — User, Meal
-│   ├── schemas.py        # Pydantic — validation entrées/sorties
-│   ├── user_manager.py   # Gestion utilisateurs (FastAPI Users)
-│   ├── db.py             # Connexion DB async
-│   ├── seed_data.py      # Données de démo
+│   ├── main.py          # FastAPI — REST endpoints + JWT auth
+│   ├── models.py        # SQLAlchemy — User, Meal
+│   ├── schemas.py       # Pydantic — input/output validation
+│   ├── user_manager.py  # User management (FastAPI Users)
+│   ├── db.py            # Async DB connection
+│   ├── seed_data.py     # Demo data
 │   ├── Dockerfile
 │   └── requirements.txt
 ├── frontend/
 │   ├── src/
 │   │   ├── pages/
-│   │   │   ├── Chat.tsx        # Interface chat IA (plat principal)
-│   │   │   ├── Dashboard.tsx   # Graphiques nutritionnels
-│   │   │   └── Historique.tsx  # Historique des repas
-│   │   ├── auth.tsx            # Contexte d'authentification
-│   │   └── App.tsx             # Routing React
+│   │   │   ├── Chat.tsx        # AI chat interface (main feature)
+│   │   │   ├── Dashboard.tsx   # Nutrition charts
+│   │   │   └── Historique.tsx  # Meal history
+│   │   ├── auth.tsx            # Auth context
+│   │   └── App.tsx             # React routing
 │   └── Dockerfile
 ├── db/
-│   └── backup_db.sh     # Script de sauvegarde PostgreSQL
+│   └── backup_db.sh     # PostgreSQL backup script
 └── docker-compose.yml
 ```
 
 ## 📡 API Endpoints
 
-| Méthode | Route | Description |
+| Method | Route | Description |
 |---|---|---|
-| `POST` | `/auth/jwt/login` | Connexion → JWT token |
-| `POST` | `/meals/` | Créer un repas |
-| `GET` | `/meals/` | Lister les repas |
-| `GET` | `/meals/stats/daily` | Stats journalières (calories + macros) |
-| `PUT` | `/meals/{id}` | Modifier un repas |
-| `DELETE` | `/meals/{id}` | Supprimer un repas |
+| `POST` | `/auth/jwt/login` | Login → JWT token |
+| `POST` | `/meals/` | Create a meal |
+| `GET` | `/meals/` | List meals |
+| `GET` | `/meals/stats/daily` | Daily stats (calories + macros) |
+| `PUT` | `/meals/{id}` | Update a meal |
+| `DELETE` | `/meals/{id}` | Delete a meal |
 
-## 🔒 Sécurité
+## 🔒 Security
 
-- Authentification JWT Bearer (FastAPI Users)
-- Mots de passe hashés bcrypt
-- Isolation des données par utilisateur (FK `user_id` sur chaque repas)
-- Variables sensibles dans `.env` (jamais committées)
-- Nginx comme reverse proxy en production
+- JWT Bearer authentication (FastAPI Users)
+- bcrypt password hashing
+- Per-user data isolation (`user_id` FK on every meal)
+- Sensitive variables in `.env` (never committed)
+- Nginx as reverse proxy in production
 
-## 📋 À faire
+## 📋 TODO
 
-- [ ] Notifications push (rappels de repas)
-- [ ] Export CSV/PDF des données nutritionnelles
-- [ ] Mode hors-ligne (PWA)
-- [ ] Support multi-langue
+- [ ] Push notifications (meal reminders)
+- [ ] CSV/PDF export of nutrition data
+- [ ] Offline mode (PWA)
+- [ ] Multi-language support
