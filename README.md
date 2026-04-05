@@ -1,5 +1,7 @@
 # 🥗 CalorieTrack
 
+> 🧒 **In plain English:** You tell the app what you ate today (like "I had a burger and fries"), and a smart AI figures out how many calories and proteins that is, then saves it for you!
+
 A self-hosted nutrition tracking web app with **AI-powered chat** — describe what you ate in natural language, and a local LLM estimates the calories and macros and saves them automatically.
 
 Designed to run on a **Raspberry Pi** (or any Linux server), deployable in a single Docker command.
